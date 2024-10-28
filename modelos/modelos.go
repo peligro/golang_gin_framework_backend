@@ -25,7 +25,17 @@ type Receta struct {
 }
 type Recetas []Receta
 
+type Contacto struct {
+	Id       uint      `json:"id"`
+	Nombre   string    `gorm:"type:varchar(100)" json:"nombre"`
+	Correo   string    `gorm:"type:varchar(100)" json:"correo"`
+	Telefono string    `gorm:"type:varchar(50)" json:"telefono"`
+	Mensaje  string    `json:"descripcion"`
+	Fecha    time.Time `json:"fecha"`
+}
+type Contactos []Contacto
+
 func Migraciones() {
-	database.Database.AutoMigrate(&Categoria{}, &Receta{})
+	database.Database.AutoMigrate(&Categoria{}, &Receta{}, &Contacto{})
 
 }

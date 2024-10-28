@@ -1,6 +1,7 @@
 package dto
 
 //validaciones https://gin-gonic.com/docs/examples/binding-and-validation/
+//https://blog.logrocket.com/gin-binding-in-go-a-tutorial-with-examples/
 
 type EjemploDto struct {
 	Correo   string `json:"correo"`
@@ -17,6 +18,14 @@ type RecetaDto struct {
 	CategoriaId uint   `json:"categoria_id" binding:"required"`
 }
 
+type ContactanosDto struct {
+	Nombre   string `json:"nombre" binding:"required"`
+	Correo   string `json:"correo" binding:"required,email"` //ojo no le pongamos espacio después de required si no, fallará
+	Telefono string `json:"telefono" binding:"required"`
+	Mensaje  string `json:"mensaje" binding:"required"`
+}
+
+// response
 type RecetaResponse struct {
 	Id             uint   `json:"id"`
 	Nombre         string `json:"nombre"`

@@ -52,6 +52,8 @@ func main() {
 	router.PUT(prefijo+"recetas/:id", rutas.Receta_put)
 	router.DELETE(prefijo+"recetas/:id", rutas.Receta_delete)
 
+	router.POST(prefijo+"contactanos", rutas.Contactanos_post)
+
 	//variables globales
 	errorVariables := godotenv.Load()
 	if errorVariables != nil {
