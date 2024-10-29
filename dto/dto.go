@@ -41,6 +41,8 @@ type RecetaResponse struct {
 	Slug           string `json:"slug"`
 	CategoriaDtoId uint   `json:"categoria_id"`
 	Categoria      string `json:"categoria"`
+	UsuarioId      uint   `json:"usuario_id"` //se agrega después de tener el módulo de seguridad
+	Usuario        string `json:"usuario"`    //se agrega después de tener el módulo de seguridad
 	Tiempo         string `json:"tiempo"`
 	Descripcion    string `json:"descripcion"`
 	Foto           string `json:"foto"`

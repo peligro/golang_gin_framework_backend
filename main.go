@@ -59,6 +59,11 @@ func main() {
 	router.GET(prefijo+"seguridad/verificacion/:token", rutas.Seguridad_verificacion)
 	router.POST(prefijo+"seguridad/login", rutas.Seguridad_login)
 
+	router.GET(prefijo+"recetas-helpers/usuario/:id", middleware.ValidarJWTMiddleware, rutas.Receta_Helper_Por_Usuario_get)
+	router.GET(prefijo+"recetas-helpers/home", rutas.Receta_Helper_Home_get)
+	router.GET(prefijo+"recetas-helpers/slug/:slug", rutas.Receta_Helper_Slug_get)
+	router.GET(prefijo+"recetas-helpers/buscador", rutas.Receta_Helper_Buscador_get)
+
 	//variables globales
 	errorVariables := godotenv.Load()
 	if errorVariables != nil {

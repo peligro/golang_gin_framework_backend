@@ -28,7 +28,7 @@ import (
 
 func Receta_get(c *gin.Context) {
 	datos := modelos.Recetas{}
-	database.Database.Order("id desc").Preload("Categoria").Find(&datos)
+	database.Database.Order("id desc").Preload("Categoria").Preload("Usuario").Find(&datos)
 	var arreglo = dto.RecetasResponse{}
 	//obtenemos la URL del proyecto
 	scheme := "http"
@@ -42,7 +42,7 @@ func Receta_get(c *gin.Context) {
 		//formeatemos la url de la foto
 		foto := scheme + "://" + c.Request.Host + "/public/uploads/recetas/" + dato.Foto
 		//llenamos el arreglo de tipo struct
-		arreglo = append(arreglo, dto.RecetaResponse{Id: dato.Id, Nombre: dato.Nombre, Slug: dato.Slug, CategoriaDtoId: dato.CategoriaID, Categoria: dato.Categoria.Nombre, Tiempo: dato.Tiempo, Descripcion: dato.Descripcion, Foto: foto, Fecha: fecha})
+		arreglo = append(arreglo, dto.RecetaResponse{Id: dato.Id, Nombre: dato.Nombre, Slug: dato.Slug, CategoriaDtoId: dato.CategoriaID, Categoria: dato.Categoria.Nombre, UsuarioId: dato.UsuarioID, Usuario: dato.Usuario.Nombre, Tiempo: dato.Tiempo, Descripcion: dato.Descripcion, Foto: foto, Fecha: fecha})
 
 	}
 
@@ -53,7 +53,7 @@ func Receta_get_con_parametro(c *gin.Context) {
 
 	dato := modelos.Receta{}
 
-	if err := database.Database.Preload("Categoria").First(&dato, id); err.Error != nil {
+	if err := database.Database.Preload("Categoria").Preload("Usuario").First(&dato, id); err.Error != nil {
 		c.JSON(http.StatusNotFound, gin.H{
 			"estado":        "error",
 			"mensaje":       "Recurso no disponible",
@@ -70,7 +70,7 @@ func Receta_get_con_parametro(c *gin.Context) {
 		//formeatemos la url de la foto
 		foto := scheme + "://" + c.Request.Host + "/public/uploads/recetas/" + dato.Foto
 		//llenamos el arreglo de tipo struct
-		c.JSON(http.StatusOK, dto.RecetaResponse{Id: dato.Id, Nombre: dato.Nombre, Slug: dato.Slug, CategoriaDtoId: dato.CategoriaID, Categoria: dato.Categoria.Nombre, Tiempo: dato.Tiempo, Descripcion: dato.Descripcion, Foto: foto, Fecha: fecha})
+		c.JSON(http.StatusOK, dto.RecetaResponse{Id: dato.Id, Nombre: dato.Nombre, Slug: dato.Slug, CategoriaDtoId: dato.CategoriaID, Categoria: dato.Categoria.Nombre, UsuarioId: dato.Usuario.Id, Usuario: dato.Usuario.Nombre, Tiempo: dato.Tiempo, Descripcion: dato.Descripcion, Foto: foto, Fecha: fecha})
 	}
 
 }
@@ -95,6 +95,9 @@ func Receta_post(c *gin.Context) {
 	if strings.TrimSpace((c.PostForm(("categoria_id")))) == "" {
 		errosValidation["categoria_id"] = append(errosValidation["categoria_id"], "El categoria_id es obligatorio")
 	}
+	if strings.TrimSpace((c.PostForm(("usuario_id")))) == "" { //se agrega esta validación una vez implementado módulo de seguridad
+		errosValidation["usuario_id"] = append(errosValidation["usuario_id"], "El usuario_id es obligatorio")
+	}
 	if len(errosValidation) > 0 {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"estado":  "error",
@@ -109,6 +112,16 @@ func Receta_post(c *gin.Context) {
 			"estado":        "error",
 			"mensaje":       "Recurso no disponible",
 			"errorOpcional": "La categoría informada no existe", //opcional para ver el error real
+		})
+		return
+	}
+	//validamos que exista el usuario_id
+	useExiste := modelos.Usuario{}
+	if err := database.Database.First(&useExiste, c.PostForm("usuario_id")); err.Error != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"estado":        "error",
+			"mensaje":       "Recurso no disponible",
+			"errorOpcional": "El usuario_id informada no existe", //opcional para ver el error real
 		})
 		return
 	}
@@ -153,9 +166,10 @@ func Receta_post(c *gin.Context) {
 	c.SaveUploadedFile(file, archivo)
 	//creamos el registro
 	categoria_id, _ := strconv.ParseUint(c.PostForm("categoria_id"), 10, 64)
-
+	usuario_id, _ := strconv.ParseUint(c.PostForm("usuario_id"), 10, 64)
 	datos := modelos.Receta{
 		CategoriaID: uint(categoria_id),
+		UsuarioID:   uint(usuario_id),
 		Nombre:      c.PostForm("nombre"),
 		Slug:        slug.Make(c.PostForm("nombre")),
 		Tiempo:      c.PostForm("tiempo"),

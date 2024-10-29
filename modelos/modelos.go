@@ -16,6 +16,8 @@ type Receta struct {
 	Id          uint      `json:"id"`
 	CategoriaID uint      `json:"categoria_id"`
 	Categoria   Categoria `json:"categoria"`
+	UsuarioID   uint      `json:"usuario_id"`
+	Usuario     Usuario   `json:"usuario"`
 	Nombre      string    `gorm:"type:varchar(100)" json:"nombre"`
 	Slug        string    `gorm:"type:varchar(100)" json:"slug"`
 	Tiempo      string    `gorm:"type:varchar(100)" json:"tiempo"`
