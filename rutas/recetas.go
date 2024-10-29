@@ -76,6 +76,7 @@ func Receta_get_con_parametro(c *gin.Context) {
 }
 
 func Receta_post(c *gin.Context) {
+	//obtenemos el valor de
 	file, errFoto := c.FormFile("foto")
 	//validamos los campos
 	errosValidation := map[string][]string{}

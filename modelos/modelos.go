@@ -6,7 +6,7 @@ import (
 )
 
 type Categoria struct {
-	Id     uint   `json:"id"`
+	Id     uint   `json:"id"` //bigint
 	Nombre string `gorm:"type:varchar(100)" json:"nombre"`
 	Slug   string `gorm:"type:varchar(100)" json:"slug"`
 }
@@ -35,7 +35,27 @@ type Contacto struct {
 }
 type Contactos []Contacto
 
+type Estado struct {
+	Id     uint   `json:"id"`
+	Nombre string `gorm:"type:varchar(50)" json:"nombre"`
+}
+
+type Estados []Estado
+
+type Usuario struct {
+	Id       uint      `json:"id"`
+	EstadoID uint      `json:"estado_id"`
+	Estado   Estado    `json:"estado"`
+	Nombre   string    `gorm:"type:varchar(100)" json:"nombre"`
+	Correo   string    `gorm:"type:varchar(100)" json:"correo"`
+	Password string    `gorm:"type:varchar(160)" json:"password"`
+	Token    string    `gorm:"type:varchar(100)" json:"token"`
+	Fecha    time.Time `json:"fecha"`
+}
+
+type Usuarios []Usuario
+
 func Migraciones() {
-	database.Database.AutoMigrate(&Categoria{}, &Receta{}, &Contacto{})
+	database.Database.AutoMigrate(&Categoria{}, &Receta{}, &Contacto{}, &Estado{}, &Usuario{})
 
 }

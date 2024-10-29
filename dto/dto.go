@@ -24,6 +24,15 @@ type ContactanosDto struct {
 	Telefono string `json:"telefono" binding:"required"`
 	Mensaje  string `json:"mensaje" binding:"required"`
 }
+type UsuarioDto struct {
+	Nombre   string `json:"nombre"`
+	Correo   string `json:"correo"`
+	Password string `json:"password"`
+}
+type LoginDto struct {
+	Correo   string `json:"correo"`
+	Password string `json:"password"`
+}
 
 // response
 type RecetaResponse struct {

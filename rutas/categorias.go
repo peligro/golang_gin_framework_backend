@@ -35,6 +35,8 @@ func Categoria_get_con_parametro(c *gin.Context) {
 }
 
 func Categoria_post(c *gin.Context) {
+	//aplicamos middleware de protección de rutas
+
 	var body dto.CategoriaDto
 	//validamos que venga el json
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -68,6 +70,7 @@ func Categoria_post(c *gin.Context) {
 
 }
 func Categoria_put(c *gin.Context) {
+
 	//obtenemos los datos del json request
 	var body dto.CategoriaDto
 	//validamos que venga el json

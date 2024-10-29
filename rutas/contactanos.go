@@ -11,7 +11,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+/*
+	{
+	    "nombre":"Juan Pérez",
+	    "correo":"info@tamila.cl",
+	    "telefono":"",
+	    "mensaje":"hola quiero contactarlos con ñandú"
+	}
+*/
 func Contactanos_post(c *gin.Context) {
+
 	var body dto.ContactanosDto
 
 	if err := c.ShouldBindJSON(&body); err != nil {

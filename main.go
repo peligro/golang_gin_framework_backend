@@ -5,6 +5,7 @@ package main
 //go run github.com/pilu/fresh
 //go run main.go
 import (
+	"backend/middleware"
 	"backend/modelos"
 	"backend/rutas"
 	"os"
@@ -42,17 +43,21 @@ func main() {
 
 	router.GET(prefijo+"categorias", rutas.Categoria_get)
 	router.GET(prefijo+"categorias/:id", rutas.Categoria_get_con_parametro)
-	router.POST(prefijo+"categorias", rutas.Categoria_post)
-	router.PUT(prefijo+"categorias/:id", rutas.Categoria_put)
-	router.DELETE(prefijo+"categorias/:id", rutas.Categoria_delete)
+	router.POST(prefijo+"categorias", middleware.ValidarJWTMiddleware, rutas.Categoria_post)
+	router.PUT(prefijo+"categorias/:id", middleware.ValidarJWTMiddleware, rutas.Categoria_put)
+	router.DELETE(prefijo+"categorias/:id", middleware.ValidarJWTMiddleware, rutas.Categoria_delete)
 
 	router.GET(prefijo+"recetas", rutas.Receta_get)
 	router.GET(prefijo+"recetas/:id", rutas.Receta_get_con_parametro)
-	router.POST(prefijo+"recetas", rutas.Receta_post)
-	router.PUT(prefijo+"recetas/:id", rutas.Receta_put)
-	router.DELETE(prefijo+"recetas/:id", rutas.Receta_delete)
+	router.POST(prefijo+"recetas", middleware.ValidarJWTMiddleware, rutas.Receta_post)
+	router.PUT(prefijo+"recetas/:id", middleware.ValidarJWTMiddleware, rutas.Receta_put)
+	router.DELETE(prefijo+"recetas/:id", middleware.ValidarJWTMiddleware, rutas.Receta_delete)
 
 	router.POST(prefijo+"contactanos", rutas.Contactanos_post)
+
+	router.POST(prefijo+"seguridad/registro", rutas.Seguridad_registro)
+	router.GET(prefijo+"seguridad/verificacion/:token", rutas.Seguridad_verificacion)
+	router.POST(prefijo+"seguridad/login", rutas.Seguridad_login)
 
 	//variables globales
 	errorVariables := godotenv.Load()
