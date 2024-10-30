@@ -9,7 +9,9 @@ import (
 	"backend/modelos"
 	"backend/rutas"
 	"os"
+	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -19,6 +21,23 @@ var prefijo = "/api/v1/"
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
+	//cors https://pkg.go.dev/github.com/gin-contrib/cors#section-readme
+	// CORS for https://foo.com and https://github.com origins, allowing:
+	// - PUT and PATCH methods
+	// - Origin header
+	// - Credentials share
+	// - Preflight requests cached for 12 hours
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowMethods:     []string{"PUT", "PATCH"},
+		AllowHeaders:     []string{"Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "https://github.com"
+		},
+		MaxAge: 12 * time.Hour,
+	}))
 	//migrar la bd
 	modelos.Migraciones()
 	//archivos estáticos
@@ -71,6 +90,7 @@ func main() {
 		panic(errorVariables)
 
 	}
+
 	//inicio servidor
 	router.Run(":" + os.Getenv("PORT"))
 }
