@@ -96,6 +96,11 @@ func ValidarJWTMiddleware(c *gin.Context) {
 		}
 	} else {
 
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+			"estado":         "error",
+			"mensaje":        "No autorizado",
+			"estadoOpcional": "Error tratando de leer los datos",
+		})
 		return
 	}
 

@@ -1,5 +1,6 @@
 package main
 
+//go mod init nombre_proyecto
 //snap install go --classic
 //go get github.com/pilu/fresh
 //go run github.com/pilu/fresh
@@ -9,9 +10,7 @@ import (
 	"backend/modelos"
 	"backend/rutas"
 	"os"
-	"time"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -21,23 +20,9 @@ var prefijo = "/api/v1/"
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
-	//cors https://pkg.go.dev/github.com/gin-contrib/cors#section-readme
-	// CORS for https://foo.com and https://github.com origins, allowing:
-	// - PUT and PATCH methods
-	// - Origin header
-	// - Credentials share
-	// - Preflight requests cached for 12 hours
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"PUT", "PATCH"},
-		AllowHeaders:     []string{"Origin"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		AllowOriginFunc: func(origin string) bool {
-			return origin == "https://github.com"
-		},
-		MaxAge: 12 * time.Hour,
-	}))
+	//cors
+	router.Use(corsMiddleware())
+
 	//migrar la bd
 	modelos.Migraciones()
 	//archivos estáticos
@@ -82,6 +67,7 @@ func main() {
 	router.GET(prefijo+"recetas-helpers/home", rutas.Receta_Helper_Home_get)
 	router.GET(prefijo+"recetas-helpers/slug/:slug", rutas.Receta_Helper_Slug_get)
 	router.GET(prefijo+"recetas-helpers/buscador", rutas.Receta_Helper_Buscador_get)
+	router.POST(prefijo+"recetas-helpers/foto", rutas.Receta_Helper_Editar_Foto)
 
 	//variables globales
 	errorVariables := godotenv.Load()
@@ -93,6 +79,20 @@ func main() {
 
 	//inicio servidor
 	router.Run(":" + os.Getenv("PORT"))
+}
+func corsMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(204)
+			return
+		}
+
+		c.Next()
+	}
 }
 
 /*
